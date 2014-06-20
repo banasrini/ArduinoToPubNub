@@ -14,14 +14,7 @@
     <!-- Custom styles for this template -->
     <link href="blog.css" rel="stylesheet">
 
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+   
   <style type="text/css"></style><style id="holderjs-style" type="text/css"></style></head>
 
   <body style="">
@@ -29,7 +22,7 @@
     <div class="container">
 
       <div class="blog-header">
-        <h1 class="blog-title">Arduino</h1>
+        <h1 class="blog-title">Arduino To PubNub</h1>
         <p class="lead blog-description"><a href = "/Users/bhavana/Desktop/bootstrap/cover.html">IoT-PubNub-Embedded Devices </a></p>
       </div>
 
@@ -40,8 +33,7 @@
           <div class="blog-post">
             <p class="blog-post-meta">June 7, 2014 by <a href="#">Bhavana</a></p>
 
-            <p>This is second in the IoT-PubNub-Embedded Devices series, and here we jump to the world of Arduinos. </p>
-            <hr>
+           
             <p>The Arduino is a micro-controller and development environment that can be used, just like the Pi, to read information from
             its sensors as well as to control other devices. Programming on the Arduino is extremely simple, and this has led to
             its widespread use. Again, as with the Pi, it is a good starting place for experimenting with the world of Internet of Things.
@@ -69,42 +61,83 @@
             the Raspberry Pi OS and open IDLE, the python IDE. 
             <br></br>
             <p> <strong> STEP 2: </strong> Open a new window and paste the following code.
-            <pre><code>from Pubnub import Pubnub
-from IoT_wrapper import iotwrapper
+            <pre><code>#include &ltSPI.h&gt
+#include &ltEthernet.h&gt
+#include "string.h"
+#include "ardui_wrapper.h"
 
-pi = iotwrapper(publish_key = 'demo', 
-		subscribe_key = 'demo', 
-		uuid = 'PI')
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
-channel = 'iotchannel'
-message = "hello from pi"
+char pubkey[] = "demo";char subkey[] = "demo";char channel[] = "iotchannel";char uuid[] = "Arduino";
 
-pi.send(channel, message)
-		
-pi.connect(channel)</code></pre>
+iotbridge ard;
+
+void do_something(String value){
+          Serial.println(value);
+        }
+
+void setup()
+{  
+	Serial.begin(9600);
+
+	while (!Ethernet.begin(mac)) {
+		Serial.println("Ethernet setup error");
+		delay(1000);
+	}
+	<b>ard.init( pubkey, subkey, uuid);     </b>  
+}
+
+void loop()
+{      
+        String returnmessage;
+	Ethernet.maintain();
+        
+        //Publish
+      <b>  ard.send(channel,"\"Hey There\"");</b>
+
+        //Subscribe
+       <b> returnmessage = ard.connect(channel); </b>
+        
+        //callback function of sorts, to work with the received message
+       <b> do_something(returnmessage); </b>
+	Serial.println();
+}</code></pre>
+
+
             
              <blockquote>
-              <p> The above code lets you set up the following :
+              <p> The above code lets you set the following :
               <ul>
-              	<li> publish key using "publish_key" </li>
-              	<li> subscribe key using "subscribe_key" </li>
+              	<li> publish key using "pubkey" </li>
+              	<li> subscribe key using "subkey" </li>
               	<li> UUID using "uuid" </li>
               	<li> channel you wish to subscribe and publish to using "channel"</li>
-              	<li> message that you want to send. This is a JSON message. </li>
               </ul>
               
               </p>
             </blockquote> 
-            <p> We create an instance of the iotwrapper called pi and we can use the SEND and CONNECT methods belonging to that
+            
+        <p> For all of you who are familiar with Arduino, you will notice that this is in fact only a few additional lines of code in
+setup() and loop(). The remaining code sets up the Ethernet connection to the Arduino.   </p>
+              <p> The keys lines of code are just three lines:
+              <ul>
+              	<li> <b>ard.init()</b> that lets you initialize variables </li>
+              	<li> <b>ard.send()</b> that lets you send a message over the specified channel </li>
+              	<li> <b>ard.connect() </b>that lets you subscribe to a channel to receive messages </li>
+              </ul>
+              
+            
+            </blockquote>We create an instance of the iotbridge called ard and we can use the SEND and CONNECT methods belonging to that
             class.  
             
             <br></br>
             <strong>SEND: </strong>This invokes the publish() API to send any message over a desired 
 			channel.</p>
-            <p><pre><code>def send(self, channel, message):
-    self.pubnub.publish({
-    	'channel' : channel,
-    	'message' : message})</code></pre></p>    
+            <p><pre><code>bool iotbridge::send(const char *channel, const char *message){
+  EthernetClient *client;
+  client = PubNub.publish(channel,message);
+  return client;
+}</code></pre></p>    
             <br></br>
             
         
@@ -112,19 +145,14 @@ pi.connect(channel)</code></pre>
              connected to the same channel.
             the call back function receive is invoked when subscribe runs.
              </p>
-			<pre><code>def connect(self, channel):
-    self.pubnub.subscribe({
-      	'channel' : channel,
-       	'callback' : self.receive})
-       		
-def receive(self,message):  
-    print(message)</code></pre>
+			<pre><code>String iotbridge::connect(const char *channel){
+  PubSubClient *pclient = PubNub.subscribe(channel);</code></pre>
     		<br>
     		<p> You can customize the channels you publish/subscribe to, the UUID you assume and also the messages you 
     		send by just changing the above fields. 
     		<br></br>
     	<p> <strong> huzzzaaaaah! </strong> 
-    	Thats it! You can now talk Raspberry Pi to any other device or application subscribing/publishing to the same channel.
+    	Thats it! You can now talk Arduino to any other device or application subscribing/publishing to the same channel.
     	
     	</p>
             
@@ -168,9 +196,6 @@ def receive(self,message):
         <a href="#">Back to top</a>
       </p>
     </div>
-    
-    
-
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
