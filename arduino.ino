@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include "string.h"
-#include "ardui_wrapper.h"
+#include "Arduino_header.h"
 
 // Some Ethernet shields have a MAC address printed on a sticker on the shield;
 // fill in that address here, or choose your own at random:
