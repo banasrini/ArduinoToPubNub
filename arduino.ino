@@ -18,11 +18,10 @@ iotbridge ard;
 void do_something(String value){
           Serial.println("in the callback");
           Serial.println(value);
-        }
+}
 
 void setup()
 {
-       
 	Serial.begin(9600);
 	Serial.println("Serial set up");
 
@@ -33,10 +32,8 @@ void setup()
 	
 	Serial.println("Ethernet set up");
 
-        
 	ard.dashinit( pubkey, subkey, uuid); 
 	Serial.println("PubNub set up");
-       
 }
 
 void loop()
