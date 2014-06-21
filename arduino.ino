@@ -43,14 +43,14 @@ void loop()
         
         //Publish
 	Serial.println("publishing a message");
-  ard.dashsend(channel,"\"Hey There\"");
+  	ard.dashsend(channel,"\"Hey There\"");
         
 
         //Subscribe
 	Serial.println("waiting for a message");
-  returnmessage = ard.dashconnect(channel2);
+  	returnmessage = ard.dashconnect(channel2);
         
         // callback function of sorts, to work with the received message
-  do_something(returnmessage);
+  	do_something(returnmessage);
 	Serial.println();
 }
