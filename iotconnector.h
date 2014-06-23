@@ -22,7 +22,6 @@ bool iotbridge::init(const char *publish_key, const char *subscribe_key, const c
   
   PubNub.begin(publish_key,subscribe_key);
   PubNub.set_uuid(uuid);
-  Serial.println("initialized the variables");
 }
 
 bool iotbridge::send(const char *channel, const char *message){
