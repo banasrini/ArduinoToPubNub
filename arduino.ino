@@ -12,7 +12,7 @@ char subkey[] = "demo";
 char channel[] = "iotchannel";
 char uuid[] = "Arduino";
 
-iotbridge arduino
+iotbridge arduino;
 
 void initialize(){
         Serial.begin(9600);
