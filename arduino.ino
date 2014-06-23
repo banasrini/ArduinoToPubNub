@@ -10,10 +10,20 @@ byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 char pubkey[] = "demo";
 char subkey[] = "demo";
 char channel[] = "iotchannel";
-char channel2[] = "userz";
 char uuid[] = "Arduino";
 
-iotbridge ard;
+iotbridge ard
+
+void initialize(){
+        Serial.begin(9600);
+	Serial.println("Serial set up");
+
+	while (!Ethernet.begin(mac)) {
+		Serial.println("Ethernet setup error");
+		delay(1000);
+	}
+	Serial.println("Ethernet set up");
+}
 
 void do_something(String value){
           Serial.println("in the callback");
@@ -22,33 +32,25 @@ void do_something(String value){
 
 void setup()
 {
-	Serial.begin(9600);
-	Serial.println("Serial set up");
+	initialize();
 
-	while (!Ethernet.begin(mac)) {
-		Serial.println("Ethernet setup error");
-		delay(1000);
-	}
-	
-	Serial.println("Ethernet set up");
-
-	ard.dashinit( pubkey, subkey, uuid); 
+	ard.init( pubkey, subkey, uuid); 
 	Serial.println("PubNub set up");
 }
 
 void loop()
 {      
-  String returnmessage;
+  	String returnmessage;
 	Ethernet.maintain();
         
         //Publish
 	Serial.println("publishing a message");
-  	ard.dashsend(channel,"\"Hey There\"");
+  	ard.send(channel,"\"Hey There\"");
         
 
         //Subscribe
 	Serial.println("waiting for a message");
-  	returnmessage = ard.dashconnect(channel2);
+  	returnmessage = ard.connect(channel);
         
         // callback function of sorts, to work with the received message
   	do_something(returnmessage);
