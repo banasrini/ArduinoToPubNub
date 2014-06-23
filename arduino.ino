@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include "string.h"
-#include "Arduino_header.h"
+#include "iotconnector.h"
 
 // Some Ethernet shields have a MAC address printed on a sticker on the shield;
 // fill in that address here, or choose your own at random:
@@ -12,7 +12,7 @@ char subkey[] = "demo";
 char channel[] = "iotchannel";
 char uuid[] = "Arduino";
 
-iotbridge ard
+iotbridge arduino
 
 void initialize(){
         Serial.begin(9600);
@@ -34,7 +34,7 @@ void setup()
 {
 	initialize();
 
-	ard.init( pubkey, subkey, uuid); 
+	arduino.init( pubkey, subkey, uuid); 
 	Serial.println("PubNub set up");
 }
 
@@ -45,12 +45,12 @@ void loop()
         
         //Publish
 	Serial.println("publishing a message");
-  	ard.send(channel,"\"Hey There\"");
+  	arduino.send(channel,"\"Hey There\"");
         
 
         //Subscribe
 	Serial.println("waiting for a message");
-  	returnmessage = ard.connect(channel);
+  	returnmessage = arduino.connect(channel);
         
         // callback function of sorts, to work with the received message
   	do_something(returnmessage);
