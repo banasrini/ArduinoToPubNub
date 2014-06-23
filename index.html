@@ -22,8 +22,8 @@
     <div class="container">
 
       <div class="blog-header">
-        <h1 class="blog-title">Arduino To PubNub</h1>
-        <p class="lead blog-description"><a href = "/Users/bhavana/Desktop/bootstrap/cover.html">IoT-PubNub-Embedded Devices </a></p>
+        <h1 class="blog-title">Arduino To PubNub In Two Steps</h1>
+       
       </div>
 
       <div class="row">
@@ -31,7 +31,7 @@
         <div class="col-sm-8 blog-main">
 
           <div class="blog-post">
-            <p class="blog-post-meta">June 7, 2014 by <a href="#">Bhavana</a></p>
+            <p class="blog-post-meta">June 23, 2014 by <a href="#">Bhavana</a></p>
 
            
             <p>The Arduino is a micro-controller and development environment that can be used, just like the Pi, to read information from
@@ -61,13 +61,13 @@
             <pre><code>#include &ltSPI.h&gt
 #include &ltEthernet.h&gt
 #include "string.h"
-#include "ardui_wrapper.h"
+#include "iotconnector.h"
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
 char pubkey[] = "demo";char subkey[] = "demo";char channel[] = "iotchannel";char uuid[] = "Arduino";
 
-iotbridge ard;
+iotbridge arduino;
 
 void initialize(){
         Serial.begin(9600);
@@ -87,7 +87,7 @@ void do_something(String value){
 void setup()
 {  
 	initialize();
-	<b>ard.init( pubkey, subkey, uuid);     </b>  
+	<b>arduino.init( pubkey, subkey, uuid);     </b>  
 }
 
 void loop()
@@ -96,10 +96,10 @@ void loop()
 	Ethernet.maintain();
         
         //Publish
-      <b>  ard.send(channel,"\"Hey There\"");</b>
+      <b>  arduino.send(channel,"\"Hey There\"");</b>
 
-        //Subscribe
-       <b> returnmessage = ard.connect(channel); </b>
+        //Subscribe 
+       <b> returnmessage = arduino.connect(channel); </b>
         
         //callback function of sorts, to work with the received message
        <b> do_something(returnmessage); </b>
@@ -107,7 +107,7 @@ void loop()
 }</code></pre>
 
 
-            
+            <br>
              <blockquote>
               <p> The above code lets you set the following :
               <ul>
@@ -124,13 +124,14 @@ void loop()
  loop(). The remaining code sets up the Ethernet connection to the Arduino.   </p>
               <p> The keys lines of code are just three lines:
               <ul>
-              	<li> <b>ard.init()</b> that lets you initialize variables </li>
-              	<li> <b>ard.send()</b> that lets you send a message over the specified channel </li>
-              	<li> <b>ard.connect() </b>that lets you subscribe to a channel to receive messages </li>
+              	<li> <b>arduino.init()</b> that lets you initialize variables </li>
+              	<li> <b>arduino.send()</b> that lets you send a message over the specified channel </li>
+              	<li> <b>arduino.connect() </b>that lets you subscribe to a channel to receive messages </li>
               </ul>
               
             
-            </blockquote>We create an instance of the iotbridge called "ard" and we can use the SEND and CONNECT methods belonging to that
+            </blockquote>We create an instance of the iotbridge called "arduino" and we can use the SEND and
+             CONNECT methods belonging to that
             class.  
             
             <br></br>
@@ -145,15 +146,18 @@ void loop()
             
         
             <p><strong>CONNECT:</strong> This invokes the subscribe() API to listen for messages from other embedded devices
-             connected to the same channel.
-            The call back function receive is invoked when subscribe runs.
+             connected to the same channel.</p>
+             <p>
+            *** The call back function receive is invoked when subscribe runs. Connect() will block on subscribe, waiting 
+            for a message to be sent to the device. You can write your own simple task scheduler and bounce between tasks
+            according to their timing requirements.***
              </p>
 			<pre><code>String iotbridge::connect(const char *channel){
   PubSubClient *pclient = PubNub.subscribe(channel);</code></pre>
-    		<br>
+    		<br><br>
     		<p> You can customize the channels you publish/subscribe to, the UUID you assume and also the messages you 
     		send by just changing the above fields. 
-    		<br></br>
+    		<br>
     	<p> <strong> huzzzaaaaah! </strong> 
     	Thats it! You can now talk Arduino to any other device or application subscribing/publishing to the same channel.
     	
