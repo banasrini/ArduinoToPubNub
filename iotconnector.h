@@ -25,7 +25,7 @@ bool iotbridge::init(const char *publish_key, const char *subscribe_key, const c
 }
 
 bool iotbridge::send(const char *channel, const char *message){
-  EthernetClient *client;
+  PubNub_BASE_CLIENT *client;
   client = PubNub.publish(channel,message);
   return client;
 }
@@ -36,7 +36,7 @@ String iotbridge::connect(const char *channel){
   int i = 0;
   PubSubClient *pclient = PubNub.subscribe(channel);
 	if (!pclient) {
-		return;
+		return message;
 	}
   while (pclient->wait_for_data()) {
 		char c = pclient->read();
